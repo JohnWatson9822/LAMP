@@ -98,16 +98,25 @@ int main()
         if (iResult > 0) {
             printf("Bytes received: %d\n", iResult);
 
-            printf("Received: ");
+            printf("Client:\n");
             for (int i = 0; i < recvbuflen; i++)
             {
-                printf("%ld ", recvbuf[i]);
+                printf("%c", recvbuf[i]);
             }
 
-            printf("\n");
+            printf("\n\n");
+
+            char responseLine[] = "HTTP/1.1 200 OK\r\n";
+            char blankLine[] = "\r\n";
+            char responseHeader[] = "Server: LAMP\r\nContent-type: text/html\r\n";
+            char responseBody[] = "<html><body><h1>Hello From LAMP!</h1></body></html>";
 
             // Echo the buffer back to the sender
-            iSendResult = send(ClientSocket, recvbuf, iResult, 0);
+            char sendBuf[] = "HTTP/1.1 200 OK\r\n"
+                             "Server: LAMP\r\nContent-type: text/html\r\n"
+                             "\r\n"
+                             "<html><body><h1>Hello From LAMP!</h1></body></html>";
+            iSendResult = send(ClientSocket, sendBuf, sizeof(sendBuf), 0);
             if (iSendResult == SOCKET_ERROR) {
                 printf("send failed with error: %d\n", WSAGetLastError());
                 closesocket(ClientSocket);
